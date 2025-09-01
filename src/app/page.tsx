@@ -5,22 +5,22 @@ import { AuthProvider } from '@/contexts/AuthContext'
 import { NotificationProvider } from '@/contexts/NotificationContext'
 import { SocketProvider } from '@/contexts/SocketContext'
 import { useAuth } from '@/contexts/AuthContext'
-import Header from '@/components/Layout/Header'
-import LoginForm from '@/components/Auth/LoginForm'
-import RegisterForm from '@/components/Auth/RegisterForm'
-import ForgotPassword from '@/components/Auth/ForgotPassword'
-import DepositInstructions from '@/components/Deposit/DepositInstructions'
-import Dashboard from '@/components/Dashboard/Dashboard'
-import TriangleView from '@/components/Triangle/TriangleView'
-import TriangleDetail from '@/components/Triangle/TriangleDetail'
-import Wallet from '@/components/Wallet/Wallet'
-import Referrals from '@/components/Referrals/Referrals'
-import AdminDashboard from '@/components/Admin/AdminDashboard'
-import AdminUsers from '@/components/Admin/AdminUsers'
-import AdminTransactions from '@/components/Admin/AdminTransactions'
-import AdminPlans from '@/components/Admin/AdminPlans'
-import AdminSettings from '@/components/Admin/AdminSettings'
-import NotificationContainer from '@/components/Notifications/NotificationContainer'
+import ChessHeader from '@/components/Layout/ChessHeader'
+import ChessLoginForm from '@/components/Auth/ChessLoginForm'
+import ChessRegisterForm from '@/components/Auth/ChessRegisterForm'
+import ChessForgotPassword from '@/components/Auth/ChessForgotPassword'
+import ChessDepositInstructions from '@/components/Deposit/ChessDepositInstructions'
+import ChessDashboard from '@/components/Dashboard/ChessDashboard'
+import ChessTriangleView from '@/components/Triangle/ChessTriangleView'
+import ChessTriangleDetail from '@/components/Triangle/ChessTriangleDetail'
+import ChessWallet from '@/components/Wallet/ChessWallet'
+import ChessReferrals from '@/components/Referrals/ChessReferrals'
+import ChessAdminDashboard from '@/components/Admin/ChessAdminDashboard'
+import ChessAdminUsers from '@/components/Admin/ChessAdminUsers'
+import ChessAdminTransactions from '@/components/Admin/ChessAdminTransactions'
+import ChessAdminPlans from '@/components/Admin/ChessAdminPlans'
+import ChessAdminSettings from '@/components/Admin/ChessAdminSettings'
+import ChessNotificationContainer from '@/components/Notifications/ChessNotificationContainer'
 
 const AppContent: React.FC = () => {
   const { user, isAdmin } = useAuth()
@@ -32,7 +32,6 @@ const AppContent: React.FC = () => {
     setCurrentPage(page)
   }
 
-  // Refresh user data after deposit confirmation
   const refreshUserData = async () => {
     try {
       const response = await fetch('/api/auth/session')
@@ -52,7 +51,6 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener('navigate', handler as EventListener)
   }, [])
 
-  // Check for pending deposit from registration
   React.useEffect(() => {
     const pending = localStorage.getItem('pending_deposit')
     if (pending) {
@@ -67,7 +65,6 @@ const AppContent: React.FC = () => {
   }, [])
 
   const renderPage = () => {
-    // Debug logging
     console.log('App renderPage - State:', {
       pendingDeposit: !!pendingDeposit,
       currentPage,
@@ -75,16 +72,14 @@ const AppContent: React.FC = () => {
       isAdmin
     })
 
-    // Show deposit instructions if there's a pending deposit
     if (pendingDeposit && currentPage === 'deposit-instructions') {
       return (
-        <DepositInstructions
+        <ChessDepositInstructions
           depositInfo={pendingDeposit}
           onModalClose={() => {
             console.log('Modal closing - navigating to dashboard')
             localStorage.removeItem('pending_deposit')
             setPendingDeposit(null)
-            // Refresh user data and navigate to dashboard
             refreshUserData().then(() => {
               setTimeout(() => {
                 setCurrentPage('dashboard')
@@ -104,31 +99,31 @@ const AppContent: React.FC = () => {
     if (!user && !isAdmin) {
       switch (currentPage) {
         case 'register':
-          return <RegisterForm onNavigate={handleNavigate} />
+          return <ChessRegisterForm onNavigate={handleNavigate} />
         case 'forgot-password':
-          return <ForgotPassword onNavigate={handleNavigate} />
+          return <ChessForgotPassword onNavigate={handleNavigate} />
         default:
-          return <LoginForm onNavigate={handleNavigate} />
+          return <ChessLoginForm onNavigate={handleNavigate} />
       }
     }
 
     if (isAdmin) {
       return (
-        <div className="min-h-screen bg-gray-50">
-          <Header onNavigate={handleNavigate} currentPage={currentPage} />
+        <div className="min-h-screen">
+          <ChessHeader onNavigate={handleNavigate} currentPage={currentPage} />
           <main>
             {(() => {
               switch (currentPage) {
                 case 'admin-users':
-                  return <AdminUsers />
+                  return <ChessAdminUsers />
                 case 'admin-transactions':
-                  return <AdminTransactions />
+                  return <ChessAdminTransactions />
                 case 'admin-plans':
-                  return <AdminPlans />
+                  return <ChessAdminPlans />
                 case 'admin-settings':
-                  return <AdminSettings />
+                  return <ChessAdminSettings />
                 default:
-                  return <AdminDashboard />
+                  return <ChessAdminDashboard />
               }
             })()}
           </main>
@@ -138,21 +133,21 @@ const AppContent: React.FC = () => {
 
     if (user) {
       return (
-        <div className="min-h-screen bg-gray-50">
-          <Header onNavigate={handleNavigate} currentPage={currentPage} />
+        <div className="min-h-screen">
+          <ChessHeader onNavigate={handleNavigate} currentPage={currentPage} />
           <main>
             {(() => {
               switch (currentPage) {
                 case 'triangle':
-                  return <TriangleView />
+                  return <ChessTriangleView />
                 case 'triangle-detail':
-                  return <TriangleDetail />
+                  return <ChessTriangleDetail />
                 case 'wallet':
-                  return <Wallet />
+                  return <ChessWallet />
                 case 'referrals':
-                  return <Referrals />
+                  return <ChessReferrals />
                 default:
-                  return <Dashboard onNavigate={handleNavigate} />
+                  return <ChessDashboard onNavigate={handleNavigate} />
               }
             })()}
           </main>
@@ -160,13 +155,13 @@ const AppContent: React.FC = () => {
       )
     }
 
-    return <LoginForm onNavigate={handleNavigate} />
+    return <ChessLoginForm onNavigate={handleNavigate} />
   }
 
   return (
     <div className="App">
       {renderPage()}
-      <NotificationContainer />
+      <ChessNotificationContainer />
     </div>
   )
 }
